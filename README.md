@@ -74,3 +74,4 @@ Vos log sont accéssible via les URL suivantes :
 * Access log : {site}.pythonanywhere.com.access.log
 * Error log : {site}.pythonanywhere.com.error.log
 * Server log: {site}.pythonanywhere.com.server.log
+   ssd
