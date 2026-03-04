@@ -15,16 +15,18 @@ from urllib.request import urlopen
 from werkzeug.utils import secure_filename
 import sqlite3
 from storage import init_db, list_runs, get_run
-
-
-
-
-
+from tester.runner import main as run_tests
+from flask import redirect, url_for
 
 app = Flask(__name__)
 
 
 init_db()
+
+@app.get("/run-now")
+def run_now():
+    run_tests()   # lance le run
+    return redirect(url_for("dashboard"))
 
 @app.get("/")
 def dashboard():
