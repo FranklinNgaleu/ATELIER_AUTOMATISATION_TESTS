@@ -1,11 +1,3 @@
-from flask import Flask, render_template_string, render_template, jsonify, request, redirect, url_for, session
-from flask import render_template
-from flask import json
-from urllib.request import urlopen
-from werkzeug.utils import secure_filename
-import sqlite3
-from storage import init_db, list_runs, get_run
-
 # app = Flask(__name__)
 
 # @app.get("/")
@@ -16,16 +8,23 @@ from storage import init_db, list_runs, get_run
 #     # utile en local uniquement
 #     app.run(host="0.0.0.0", port=5000, debug=True)
 
+from flask import Flask, render_template_string, render_template, jsonify, request, redirect, url_for, session
+from flask import render_template
+from flask import json
+from urllib.request import urlopen
+from werkzeug.utils import secure_filename
+import sqlite3
+from storage import init_db, list_runs, get_run
+
+
+
 
 
 
 app = Flask(__name__)
 
 
-@app.before_first_request
-def _init():
-    init_db()
-
+init_db()
 
 @app.get("/")
 def dashboard():
