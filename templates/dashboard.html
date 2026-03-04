@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>CityBikes API Monitor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
+    .badge { display:inline-block; padding: 4px 10px; border-radius: 999px; font-weight: 700; }
+    .up { background: #e8f7ee; color: #146c2e; border: 1px solid #bfe8cc; }
+    .down { background: #fdecec; color: #8a1f1f; border: 1px solid #f5b9b9; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    th { background: #f7f7f7; text-align: left; }
+    code { background:#f3f3f3; padding: 1px 4px; border-radius: 4px; }
+    .muted { color: #666; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+
+<h1>CityBikes API Monitor</h1>
+
+{% if last_run %}
+  <p>
+    Dernier run: <b>#{{ last_run.id }}</b>
+    {% if last_run.ok %}
+      <span class="badge up">✅ UP</span>
+    {% else %}
+      <span class="badge down">❌ DOWN</span>
+    {% endif %}
+  </p>
+
+  <div class="grid">
+    <div>
+      <h3>Métriques</h3>
+      <ul>
+        <li><b>Started:</b> <span class="muted">{{ last_run.started_at }}</span></li>
+        <li><b>Finished:</b> <span class="muted">{{ last_run.finished_at }}</span></li>
+        <li><b>Latence avg:</b> {{ "%.1f"|format(last_run.lat_avg_ms) if last_run.lat_avg_ms is not none else "n/a" }} ms</li>
+        <li><b>Latence p95:</b> {{ "%.1f"|format(last_run.lat_p95_ms) if last_run.lat_p95_ms is not none else "n/a" }} ms</li>
+        <li><b>Taux d'erreur:</b>
+          {% if last_run.error_rate is not none %}
+            {{ "%.1f"|format(last_run.error_rate * 100) }}% ({{ last_run.error_requests }}/{{ last_run.total_requests }})
+          {% else %}
+            n/a
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Historique</h3>
+      <p class="muted">Derniers {{ runs|length }} runs</p>
+      <table>
+        <tr>
+          <th>ID</th><th>Status</th><th>Avg</th><th>p95</th><th>Err</th><th>Fin</th>
+        </tr>
+        {% for r in runs %}
+        <tr>
+          <td><a href="/run/{{ r.id }}">#{{ r.id }}</a></td>
+          <td>{% if r.ok %}UP{% else %}DOWN{% endif %}</td>
+          <td>{{ "%.1f"|format(r.lat_avg_ms) if r.lat_avg_ms is not none else "n/a" }}</td>
+          <td>{{ "%.1f"|format(r.lat_p95_ms) if r.lat_p95_ms is not none else "n/a" }}</td>
+          <td>{{ "%.1f"|format(r.error_rate * 100) if r.error_rate is not none else "n/a" }}%</td>
+          <td class="muted">{{ r.finished_at }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+  <h2>Détails du dernier run</h2>
+  <table>
+    <tr>
+      <th>Check</th><th>Méthode</th><th>Path</th><th>Status</th><th>OK</th><th>Latence</th><th>Erreur</th>
+    </tr>
+    {% for c in last_run.requests %}
+    <tr>
+      <td>{{ c.name }}</td>
+      <td><code>{{ c.method }}</code></td>
+      <td><code>{{ c.path }}</code></td>
+      <td>{{ c.status_code }}</td>
+      <td>{% if c.ok %}OK{% else %}ERR{% endif %}</td>
+      <td>{{ "%.1f"|format(c.latency_ms) if c.latency_ms is not none else "" }} ms</td>
+      <td class="muted">
+        {% if not c.ok %}
+          {{ c.error_type }} {{ c.error_message }}
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <p class="muted">API JSON: <a href="/api/last">/api/last</a></p>
+{% else %}
+  <p>Aucun run enregistré. Lance <code>python tester/runner.py</code>.</p>
+{% endif %}
+
+</body>
+</html>
