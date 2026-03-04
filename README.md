@@ -68,7 +68,8 @@ Vous pouvez retrouver le travail demandé dans le cadre de cet atelier directeme
 Objectif : Visualiser ses logs et découvrir ses erreurs
 ---------------------------------------------------
 Lors de vos développements, vous serez peut-être confronté à des erreurs systèmes car vous avez faits des erreurs de syntaxes dans votre code, faits de mauvaises déclarations de fonctions, appelez des modules inexistants, mal renseigner vos secrets, etc…  
-Les causes d'erreurs sont quasi illimitées. **Vous devez donc vous tourner vers les logs de votre système pour comprendre d'où vient le problème** :  
+Les causes d'erreurs sont quasi illimitées. **Vous devez donc vous tourner vers les logs de votre système pour comprendre d'où vient le problème** :
+
 
 Vos log sont accéssible via les URL suivantes :  
 * Access log : {site}.pythonanywhere.com.access.log
