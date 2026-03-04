@@ -1,7 +1,13 @@
-from datetime import datetime, timezone
+import os
+import sys
+
+# Permet d'importer les modules du projet même si le script est lancé directement
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from tester.client import ApiClient
 from tester.tests import run_tests
 from storage import save_run
+from datetime import datetime, timezone
 
 
 BASE_URL = "https://api.citybik.es/v2"
